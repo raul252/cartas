@@ -46,49 +46,65 @@ public class servletBaraja extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int gamecounter = 0;
 		
-		Baraja ba = getStatefulBaraja(request);
+		GameServicios ba = getStatefulBaraja(request);
+		ArrayList<ArrayList<Carta>> mazo;
 		gamecounter = ba.getContador();
+		PrintWriter out = response.getWriter();
+		Integer valor = 0;
+		BarajaView b = null;
 		if (gamecounter == 0){
-			ArrayList<Carta> mazo = ba.getDatosAleatorios();
+			mazo = ba.empiezaJuego();
 			response.setContentType("text/html");
-			PrintWriter out = response.getWriter();
-			BarajaView b = new BarajaView(mazo);
+			out = response.getWriter();
+			b = new BarajaView(mazo);
 			out.println(b.renderFirstView());
 			out.close();
-			ba.sumaContador();
 		} else {
 			switch (gamecounter) {
 			case 1:
 				//Procesar el primer envio
 				response.setContentType("text/html");
-				PrintWriter out = response.getWriter();
-				String valor = request.getParameter("enviovalor");
-				out.println(request.getParameter("enviovalor"));
+				 out = response.getWriter();
+				valor = Integer.parseInt(request.getParameter("enviovalor"));
+				//Obtener la mesa ordenada
+				mazo = ba.nextTable(valor);
+				b = new BarajaView(mazo);
+				out.println(b.renderFirstView());
 				break;
 			case 2:
-				
+				//Procesar el segundo envio
+				response.setContentType("text/html");
+				out = response.getWriter();
+				valor = Integer.parseInt(request.getParameter("enviovalor"));
+				//Obtener la mesa ordenada
+				mazo = ba.nextTable(valor);
+				b = new BarajaView(mazo);
+				out.println(b.renderFirstView());
 				break;
 			case 3:
-				
-				break;
-
-			default:
+				response.setContentType("text/html");
+				out = response.getWriter();
+				valor = Integer.parseInt(request.getParameter("enviovalor"));
+				Carta cartaSeleccionada = ba.getCartaElegida(valor); 
+				out.print("<html><body>");
+				out.print("<h3>La carta selecionada es "+cartaSeleccionada.getNombre()+" " + cartaSeleccionada.getValor()+"</h3>");
+				out.print("</body></html>");
 				break;
 			}
 		}
 	}
 	
-	private Baraja getStatefulBaraja(HttpServletRequest request) throws ServletException {
+	private GameServicios getStatefulBaraja(HttpServletRequest request) throws ServletException {
 		HttpSession httpSession = request.getSession(true);
-		Baraja statefulTestBean = 
-				(Baraja) httpSession.getAttribute(STATEFUL_JAVABEAN_KEY);
+		GameServicios statefulTestBean = 
+				(GameServicios) httpSession.getAttribute(STATEFUL_JAVABEAN_KEY);
 
 
 		if (statefulTestBean == null) {
 			try {
 
 				InitialContext ic = new InitialContext();
-				statefulTestBean =   (Baraja) ic.lookup("java:module/Baraja");
+				statefulTestBean =   (GameServicios) ic.lookup("java:module/GameServicios");
 				httpSession.setAttribute(STATEFUL_JAVABEAN_KEY, statefulTestBean);	          	       
 			} catch (NamingException e) {
 				throw new ServletException(e);

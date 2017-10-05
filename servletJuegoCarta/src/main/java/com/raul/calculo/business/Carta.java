@@ -1,5 +1,6 @@
 package com.raul.calculo.business;
 
+
 public class Carta {
 	private String nombre;
 	private String valor;
