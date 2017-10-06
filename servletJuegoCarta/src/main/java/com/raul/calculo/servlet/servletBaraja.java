@@ -45,12 +45,12 @@ public class servletBaraja extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int gamecounter = 0;
+		int valor;
 		
 		GameServicios ba = getStatefulBaraja(request);
 		ArrayList<ArrayList<Carta>> mazo;
 		gamecounter = ba.getContador();
 		PrintWriter out = response.getWriter();
-		Integer valor = 0;
 		BarajaView b = null;
 		if (gamecounter == 0){
 			mazo = ba.empiezaJuego();
@@ -60,12 +60,18 @@ public class servletBaraja extends HttpServlet {
 			out.println(b.renderFirstView());
 			out.close();
 		} else {
+			try {
+				valor = Integer.parseInt(request.getParameter("enviovalor"));}
+				catch (Exception e)
+				{
+					System.err.println("Error: "+e.getMessage());return;
+				}
 			switch (gamecounter) {
 			case 1:
 				//Procesar el primer envio
 				response.setContentType("text/html");
 				 out = response.getWriter();
-				valor = Integer.parseInt(request.getParameter("enviovalor"));
+				
 				//Obtener la mesa ordenada
 				mazo = ba.nextTable(valor);
 				b = new BarajaView(mazo);
@@ -75,7 +81,7 @@ public class servletBaraja extends HttpServlet {
 				//Procesar el segundo envio
 				response.setContentType("text/html");
 				out = response.getWriter();
-				valor = Integer.parseInt(request.getParameter("enviovalor"));
+				
 				//Obtener la mesa ordenada
 				mazo = ba.nextTable(valor);
 				b = new BarajaView(mazo);
@@ -84,7 +90,7 @@ public class servletBaraja extends HttpServlet {
 			case 3:
 				response.setContentType("text/html");
 				out = response.getWriter();
-				valor = Integer.parseInt(request.getParameter("enviovalor"));
+				
 				Carta cartaSeleccionada = ba.getCartaElegida(valor); 
 				out.print("<html><body>");
 				out.print("<h3>La carta selecionada es "+cartaSeleccionada.getNombre()+" " + cartaSeleccionada.getValor()+"</h3>");

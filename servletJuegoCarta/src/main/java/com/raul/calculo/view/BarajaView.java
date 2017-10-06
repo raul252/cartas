@@ -29,7 +29,7 @@ public class BarajaView {
 		}
 		sb.append("<tr><td></td></tr></table><table><tr></td><form method='POST' action='/servletJuegoCarta/servlet/baraja'><label>Selecciona la columna donde está tu carta: </label><select name='enviovalor'>");
 		for (int j=0; j<3; j++){
-			sb.append("<option value="+(j+1)+">fila "+(j+1)+"</option>");
+			sb.append("<option value="+(j+1)+">Columna "+(j+1)+"</option>");
 		}
 		sb.append("</select><input type='submit' value='Enviar'></form></td></tr></table></body></html>");
 		return sb.toString();
